@@ -1,0 +1,19 @@
+{
+  "system_package_names": {
+    "android": "1.apk",
+    "com.google.android.gms": "google-framework.apk",
+    "com.samsung.android.app": "sec-framework.apk"
+  },
+  "resource_signatures": [
+    {
+      "pattern": "0x01\\d{6}",
+      "file_name": "framework-res.apk",
+      "hint": "Android System (Generic)"
+    },
+    {
+      "pattern": "0x7e\\d{6}",
+      "file_name": "samsung-res.apk",
+      "hint": "Samsung OEM Framework"
+    }
+  ]
+}
