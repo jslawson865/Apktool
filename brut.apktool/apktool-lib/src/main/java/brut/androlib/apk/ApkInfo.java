@@ -39,8 +39,10 @@ public class ApkInfo implements YamlSerializable {
     public boolean resourcesAreCompressed;
     public boolean sharedLibrary;
     public boolean sparseResources;
+    public boolean sanitizeManifest = true;
     public Map<String, String> unknownFiles = new LinkedHashMap<>();
     public List<String> doNotCompress;
+    public List<String> manifestSanitizerHistory = new ArrayList<>();
 
     /** @deprecated use {@link #resourcesAreCompressed} */
     public boolean compressionType;
@@ -275,6 +277,10 @@ public class ApkInfo implements YamlSerializable {
                 this.sparseResources = line.getValueBool();
                 break;
             }
+            case "isSanitizeManifest": {
+                this.sanitizeManifest = line.getValueBool();
+                break;
+            }
             case "unknownFiles": {
                 this.unknownFiles = new LinkedHashMap<>();
                 reader.readMap(unknownFiles);
@@ -283,6 +289,11 @@ public class ApkInfo implements YamlSerializable {
             case "doNotCompress": {
                 this.doNotCompress = new ArrayList<>();
                 reader.readStringList(doNotCompress);
+                break;
+            }
+            case "manifestSanitizerHistory": {
+                this.manifestSanitizerHistory = new ArrayList<>();
+                reader.readStringList(manifestSanitizerHistory);
                 break;
             }
         }
@@ -300,9 +311,13 @@ public class ApkInfo implements YamlSerializable {
         writer.writeBool("resourcesAreCompressed", resourcesAreCompressed);
         writer.writeBool("sharedLibrary", sharedLibrary);
         writer.writeBool("sparseResources", sparseResources);
+        writer.writeBool("isSanitizeManifest", sanitizeManifest);
         if (unknownFiles.size() > 0) {
             writer.writeStringMap("unknownFiles", unknownFiles);
         }
         writer.writeList("doNotCompress", doNotCompress);
+        if (manifestSanitizerHistory != null && manifestSanitizerHistory.size() > 0) {
+            writer.writeList("manifestSanitizerHistory", manifestSanitizerHistory);
+        }
     }
 }

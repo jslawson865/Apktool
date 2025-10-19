@@ -192,6 +192,7 @@ public class ApkDecoder {
     }
 
     private void writeApkInfo(File outDir) throws AndrolibException {
+        mApkInfo.sanitizeManifest = mConfig.isSanitizeManifest();
         mApkInfo.save(new File(outDir, "apktool.yml"));
     }
 

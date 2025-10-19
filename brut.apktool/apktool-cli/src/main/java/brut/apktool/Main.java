@@ -298,6 +298,9 @@ public class Main {
         if (cli.hasOption("use-aapt1")) {
             config.useAapt2 = false;
         }
+        if (cli.hasOption("no-manifest-sanitize")) {
+            config.setSanitizeManifest(false);
+        }
 
         if (cli.hasOption("use-aapt1") && cli.hasOption("use-aapt2")) {
             System.err.println("You can only use one of --use-aapt1 or --use-aapt2.");
@@ -513,6 +516,11 @@ public class Main {
                 .desc("Disable crunching of resource files during the build step.")
                 .build();
 
+        Option noManifestSanitizeOption = Option.builder()
+                .longOpt("no-manifest-sanitize")
+                .desc("Disable the manifest sanitizer hook that removes incompatible attributes before building.")
+                .build();
+
         Option tagOption = Option.builder("t")
                 .longOpt("tag")
                 .desc("Tag frameworks using <tag>.")
@@ -562,6 +570,7 @@ public class Main {
             buildOptions.addOption(originalOption);
             buildOptions.addOption(aapt1Option);
             buildOptions.addOption(noCrunchOption);
+            buildOptions.addOption(noManifestSanitizeOption);
         }
 
         // add global options
@@ -581,6 +590,7 @@ public class Main {
         buildOptions.addOption(outputBuiOption);
         buildOptions.addOption(frameDirOption);
         buildOptions.addOption(forceBuiOption);
+        buildOptions.addOption(noManifestSanitizeOption);
 
         // add basic framework options
         frameOptions.addOption(tagOption);
@@ -624,6 +634,7 @@ public class Main {
         allOptions.addOption(aapt1Option);
         allOptions.addOption(aapt2Option);
         allOptions.addOption(noCrunchOption);
+        allOptions.addOption(noManifestSanitizeOption);
         allOptions.addOption(onlyMainClassesOption);
     }
 
