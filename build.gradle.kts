@@ -70,6 +70,7 @@ tasks.withType<JavaCompile> {
 
 allprojects {
     repositories {
+        mavenLocal()
         mavenCentral()
         google()
     }
@@ -163,4 +164,16 @@ subprojects {
 task("release") {
     dependsOn("build")
     finalizedBy("publish")
+}
+
+tasks.register("scanLicenses") {
+    group = "verification"
+    description = "Delegates to apktool-cli:scanLicenses to build the license inventory"
+    dependsOn(":brut.apktool:apktool-cli:scanLicenses")
+}
+
+tasks.register("generateLicenseManifest") {
+    group = "documentation"
+    description = "Generates the LICENSE_MANIFEST.md from the curated license inventory"
+    dependsOn(":brut.apktool:apktool-cli:generateLicenseManifest")
 }

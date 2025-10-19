@@ -8,13 +8,24 @@ Apktool is a tool for reverse engineering third-party, closed, binary, Android a
 
 Apktool is **NOT** intended for piracy and other non-legal uses. It could be used for localizing and adding features, adding support for custom platforms, and other GOOD purposes. Just try to be fair with the authors of an app, that you use and probably like.
 
-### Manifest Pre-Assembly Sanitizer
+### Automated Framework Dependency Resolution (vX.Y.Z)
 
-To reduce build failures triggered by unsupported or forward-looking manifest attributes, Apktool now includes a pre-assembly sanitization hook that runs before resource compilation. The sanitizer compares `AndroidManifest.xml` with the curated `manifest_blacklist.json` and removes attributes or tags that are known to break the bundled AAPT/AAPT2 versions.
+System applications and OEM-customized apps frequently require additional framework packages before they can be decoded. Apktool now provides an automated resolver that inspects the target APK and installs the required frameworks on the fly.
 
-* **Default behaviour:** Enabled automatically (`apktool.yml` records the `isSanitizeManifest` flag and the removal history).
-* **Opt-out:** Pass `--no-manifest-sanitize` during `apktool b` to skip the sanitizer, or set `isSanitizeManifest: false` in the project `apktool.yml`.
-* **Audit trail:** Any removal is logged to both the console and the `manifestSanitizerHistory` section of `apktool.yml` for easy review.
+* Use `apktool d target.apk --framework-path /path/to/frameworks` to point the resolver at a directory that contains collected frameworks such as `framework-res.apk` or `sec-framework.apk`.
+* When enabled (the default), Apktool scans the manifest and `resources.arsc` for known signatures. If matching frameworks are found in the supplied directory (or the default framework directory), they are installed before decoding begins.
+* If a framework is suspected but cannot be located, Apktool logs a warning with the name of the missing package so you can add it to your framework collection.
+
+### Smali Workflow Augmentation (vX.Y.Z)
+
+Apktool now validates and indexes decoded smali sources before they are rebuilt.
+
+* **Pre-build validation** – `apktool b` automatically runs the Smali syntax validator, catching register overflows, missing `.end method` statements, malformed branch labels, and common opcode typos prior to DEX compilation.
+* **Interactive analysis** – `apktool query <project_dir>` launches a REPL that indexes smali files for key security domains such as networking, cryptography, and native loading, returning color highlighted snippets with surrounding context.
+
+### License Manifest Automation
+
+Run `./gradlew generateLicenseManifest` to produce a curated `LICENSE_MANIFEST.md` summarizing third-party dependencies and new internal components alongside their licenses and attributions.
 
 #### Support
 - [Project Page](https://ibotpeaches.github.io/Apktool/)

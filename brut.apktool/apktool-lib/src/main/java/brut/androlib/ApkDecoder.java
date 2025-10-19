@@ -19,6 +19,7 @@ package brut.androlib;
 import brut.androlib.exceptions.AndrolibException;
 import brut.androlib.exceptions.InFileNotFoundException;
 import brut.androlib.exceptions.OutDirExistsException;
+import brut.androlib.framework.ContextualFrameworkResolver;
 import brut.androlib.apk.ApkInfo;
 import brut.androlib.res.ResourcesDecoder;
 import brut.androlib.src.SmaliDecoder;
@@ -134,6 +135,11 @@ public class ApkDecoder {
                         }
                     }
                 }
+            }
+
+            if (mConfig.autoResolveFrameworks && mConfig.decodeResources == Config.DECODE_RESOURCES_FULL
+                    && mApkInfo.hasResources()) {
+                ContextualFrameworkResolver.resolveAndInstall(mConfig, mApkInfo);
             }
 
             ResourcesDecoder resourcesDecoder = new ResourcesDecoder(mConfig, mApkInfo);

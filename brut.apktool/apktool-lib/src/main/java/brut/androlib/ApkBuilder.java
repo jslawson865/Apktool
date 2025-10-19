@@ -21,6 +21,7 @@ import brut.androlib.apk.ApkInfo;
 import brut.androlib.apk.UsesFramework;
 import brut.androlib.manifest.ManifestSanitizer;
 import brut.androlib.res.Framework;
+import brut.androlib.smali.SmaliSyntaxValidator;
 import brut.androlib.res.data.ResConfigFlags;
 import brut.androlib.res.xml.ResXmlPatcher;
 import brut.androlib.src.SmaliBuilder;
@@ -90,6 +91,8 @@ public class ApkBuilder {
                 String minSdkVersion = mApkInfo.getSdkInfo().get("minSdkVersion");
                 mMinSdkVersion = mApkInfo.getMinSdkVersionFromAndroidCodename(minSdkVersion);
             }
+
+            SmaliSyntaxValidator.validate(mApkDir, LOGGER);
 
             if (outFile == null) {
                 String outFileName = mApkInfo.apkFileName;

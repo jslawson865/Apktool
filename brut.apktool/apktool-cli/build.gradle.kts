@@ -1,3 +1,4 @@
+import org.gradle.api.tasks.JavaExec
 import proguard.gradle.ProGuardTask
 
 val apktoolVersion: String by rootProject.extra
@@ -20,12 +21,33 @@ buildscript {
 dependencies {
     implementation(libs.commons.cli)
     implementation(project(":brut.apktool:apktool-lib"))
+    implementation(libs.gson)
 }
 
 application {
     mainClass.set("brut.apktool.Main")
 
     tasks.run.get().workingDir = file(System.getProperty("user.dir"))
+}
+
+tasks.register<JavaExec>("scanLicenses") {
+    group = "verification"
+    description = "Generates a JSON inventory of third-party licenses"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("brut.apktool.license.LicenseScanner")
+    args(layout.buildDirectory.file("reports/licenses/licenses.json").get().asFile.absolutePath)
+}
+
+tasks.register<JavaExec>("generateLicenseManifest") {
+    group = "documentation"
+    description = "Produces the LICENSE_MANIFEST.md file from the license inventory"
+    dependsOn("scanLicenses")
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("brut.apktool.license.LicenseManifestGenerator")
+    args(
+        layout.buildDirectory.file("reports/licenses/licenses.json").get().asFile.absolutePath,
+        project.rootProject.file("LICENSE_MANIFEST.md").absolutePath
+    )
 }
 
 tasks.withType<Jar> {

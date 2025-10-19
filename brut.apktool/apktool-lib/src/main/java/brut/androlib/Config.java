@@ -66,11 +66,13 @@ public class Config {
     public boolean forceDelete = false;
     public boolean keepBrokenResources = false;
     public boolean baksmaliDebugMode = true;
+    public boolean autoResolveFrameworks = true;
 
     // Common options
     public int jobs = Runtime.getRuntime().availableProcessors();
     public String frameworkDirectory = null;
     public String frameworkTag = null;
+    public String frameworkSearchPath = null;
     public String aaptPath = "";
     public int aaptVersion = 1; // default to v1
 

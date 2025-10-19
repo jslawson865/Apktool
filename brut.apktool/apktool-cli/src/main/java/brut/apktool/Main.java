@@ -22,6 +22,7 @@ import brut.androlib.exceptions.CantFindFrameworkResException;
 import brut.androlib.exceptions.InFileNotFoundException;
 import brut.androlib.exceptions.OutDirExistsException;
 import brut.androlib.res.Framework;
+import brut.apktool.query.SmaliQueryConsole;
 import brut.common.BrutException;
 import brut.directory.DirectoryException;
 import brut.directory.ExtFile;
@@ -106,6 +107,9 @@ public class Main {
             } else if (opt.equalsIgnoreCase("publicize-resources")) {
                 cmdPublicizeResources(commandLine, config);
                 cmdFound = true;
+            } else if (opt.equalsIgnoreCase("query")) {
+                cmdQuery(commandLine);
+                cmdFound = true;
             }
         }
 
@@ -120,9 +124,30 @@ public class Main {
         }
     }
 
+    private static void cmdQuery(CommandLine cli) throws AndrolibException {
+        String target = getLastArg(cli);
+        if (target == null) {
+            usage();
+            return;
+        }
+        File projectDir = new File(target);
+        if (!projectDir.exists()) {
+            System.err.println("Project directory does not exist: " + projectDir);
+            System.exit(1);
+        }
+        try {
+            new SmaliQueryConsole().run(projectDir.toPath());
+        } catch (IOException e) {
+            throw new AndrolibException("Failed to run query console", e);
+        }
+    }
+
     private static void initConfig(CommandLine cli, Config config) {
         if (cli.hasOption("p") || cli.hasOption("frame-path")) {
             config.frameworkDirectory = cli.getOptionValue("p");
+        }
+        if (cli.hasOption("framework-path")) {
+            config.frameworkSearchPath = cli.getOptionValue("framework-path");
         }
         if (cli.hasOption("t") || cli.hasOption("tag")) {
             config.frameworkTag = cli.getOptionValue("t");
@@ -430,6 +455,13 @@ public class Main {
                 .argName("dir")
                 .build();
 
+        Option frameworkSearchOption = Option.builder()
+                .longOpt("framework-path")
+                .desc("Look for contextual frameworks in <dir> before decoding.")
+                .hasArg(true)
+                .argName("dir")
+                .build();
+
         Option frameIfDirOption = Option.builder("p")
                 .longOpt("frame-path")
                 .desc("Store framework files into <dir>.")
@@ -549,6 +581,7 @@ public class Main {
         decodeOptions.addOption(frameTagOption);
         decodeOptions.addOption(outputDecOption);
         decodeOptions.addOption(frameDirOption);
+        decodeOptions.addOption(frameworkSearchOption);
         decodeOptions.addOption(forceDecOption);
         decodeOptions.addOption(noSrcOption);
         decodeOptions.addOption(noResOption);
