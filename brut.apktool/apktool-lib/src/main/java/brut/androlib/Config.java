@@ -53,6 +53,7 @@ public class Config {
     public boolean updateFiles = false;
     public boolean useAapt2 = true;
     public boolean noCrunch = false;
+    public boolean sanitizeManifest = true;
 
     // Decode options
     public short decodeSources = DECODE_SOURCES_SMALI;
@@ -84,6 +85,14 @@ public class Config {
 
     public boolean isDecodeResolveModeRemoving() {
         return decodeResolveMode == DECODE_RES_RESOLVE_REMOVE;
+    }
+
+    public boolean isSanitizeManifest() {
+        return sanitizeManifest;
+    }
+
+    public void setSanitizeManifest(boolean sanitizeManifest) {
+        this.sanitizeManifest = sanitizeManifest;
     }
 
     private Config() {

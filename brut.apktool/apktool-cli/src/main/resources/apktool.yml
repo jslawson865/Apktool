@@ -1,0 +1,3 @@
+# Default Apktool project metadata overrides
+# Additional fields are populated dynamically during decode.
+isSanitizeManifest: true

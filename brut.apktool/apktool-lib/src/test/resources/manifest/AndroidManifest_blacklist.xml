@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.blacklist">
+    <queries>
+        <package android:name="com.example.other" />
+    </queries>
+    <application
+        android:allowCrossUidActivitySwitchFromBelow="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:maxAspectRatio="2.0">
+        <activity android:name=".MainActivity" />
+    </application>
+</manifest>
