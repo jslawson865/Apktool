@@ -1,0 +1,29 @@
+{
+  "description": "List of AndroidManifest.xml attributes that are known to cause AAPT/AAPT2 compilation failures due to version incompatibility.",
+  "attributes_to_remove": [
+    {
+      "name": "android:allowCrossUidActivitySwitchFromBelow",
+      "scope": "application",
+      "min_apktool_version": "2.9.3",
+      "reason": "Often unsupported by bundled AAPT2 versions targeting older API levels."
+    },
+    {
+      "name": "android:maxAspectRatio",
+      "scope": "manifest/application",
+      "min_apktool_version": "2.8.0",
+      "reason": "Strict parsing issues in older AAPT builds."
+    },
+    {
+      "name": "android:dataExtractionRules",
+      "scope": "application",
+      "min_apktool_version": "2.7.0",
+      "reason": "New attribute for Android 12+ causing issues in older tooling."
+    }
+  ],
+  "tag_to_remove": [
+    {
+      "name": "queries",
+      "scope": "manifest"
+    }
+  ]
+}

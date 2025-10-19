@@ -19,6 +19,7 @@ package brut.androlib;
 import brut.androlib.exceptions.AndrolibException;
 import brut.androlib.apk.ApkInfo;
 import brut.androlib.apk.UsesFramework;
+import brut.androlib.manifest.ManifestSanitizer;
 import brut.androlib.res.Framework;
 import brut.androlib.res.data.ResConfigFlags;
 import brut.androlib.res.xml.ResXmlPatcher;
@@ -43,6 +44,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
@@ -101,6 +103,33 @@ public class ApkBuilder {
 
             scheduleBuildDexFiles();
             backupManifestFile(manifest, manifestOriginal);
+
+            boolean sanitizeManifest = mConfig.isSanitizeManifest();
+            if (mApkInfo != null && !mApkInfo.sanitizeManifest) {
+                sanitizeManifest = false;
+            }
+            if (mApkInfo != null) {
+                mApkInfo.sanitizeManifest = sanitizeManifest;
+            }
+
+            boolean manifestUpdated = false;
+            if (sanitizeManifest) {
+                LOGGER.info("I: Running pre-assembly Manifest Sanitizer...");
+                try {
+                    manifestUpdated = ManifestSanitizer.sanitize(manifest, mApkInfo);
+                } catch (AndrolibException ex) {
+                    LOGGER.log(Level.WARNING, "W: Manifest sanitization failed but continuing build: {0}", ex.getMessage());
+                }
+            }
+
+            if (mApkInfo != null && (!sanitizeManifest || manifestUpdated)) {
+                try {
+                    mApkInfo.save(new File(mApkDir, "apktool.yml"));
+                } catch (AndrolibException ex) {
+                    LOGGER.log(Level.WARNING, "W: Unable to persist manifest sanitizer state: {0}", ex.getMessage());
+                }
+            }
+
             buildResources();
             copyLibs();
             copyOriginalFilesIfEnabled();

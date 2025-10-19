@@ -8,6 +8,14 @@ Apktool is a tool for reverse engineering third-party, closed, binary, Android a
 
 Apktool is **NOT** intended for piracy and other non-legal uses. It could be used for localizing and adding features, adding support for custom platforms, and other GOOD purposes. Just try to be fair with the authors of an app, that you use and probably like.
 
+### Manifest Pre-Assembly Sanitizer
+
+To reduce build failures triggered by unsupported or forward-looking manifest attributes, Apktool now includes a pre-assembly sanitization hook that runs before resource compilation. The sanitizer compares `AndroidManifest.xml` with the curated `manifest_blacklist.json` and removes attributes or tags that are known to break the bundled AAPT/AAPT2 versions.
+
+* **Default behaviour:** Enabled automatically (`apktool.yml` records the `isSanitizeManifest` flag and the removal history).
+* **Opt-out:** Pass `--no-manifest-sanitize` during `apktool b` to skip the sanitizer, or set `isSanitizeManifest: false` in the project `apktool.yml`.
+* **Audit trail:** Any removal is logged to both the console and the `manifestSanitizerHistory` section of `apktool.yml` for easy review.
+
 #### Support
 - [Project Page](https://ibotpeaches.github.io/Apktool/)
 - [#apktool on libera.chat](https://web.libera.chat/)
