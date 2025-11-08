@@ -1,0 +1,40 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: set up JDK 11
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      # Add Android Linting
+      - name: Run Android Lint
+        run: ./gradlew lintDebug
+
+      # Add Security Vulnerability Scanning (using CodeQL as an example)
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java # Specify the language of your project
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+      # Add Secret Scanning (using gitleaks)
+      - name: Gitleaks Scan
+        uses: zricethezav/gitleaks@v0.5.0
