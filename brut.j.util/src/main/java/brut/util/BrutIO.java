@@ -95,7 +95,12 @@ public class BrutIO {
     }
 
     public static boolean detectPossibleDirectoryTraversal(String entry) {
-        return entry.contains("../") || entry.contains("/..") || entry.contains("..\\") || entry.contains("\\..");
+        String normalized = entry.replace('\\', '/');
+        if (normalized.startsWith("//") || normalized.matches("^[a-zA-Z]:/.*")) {
+            return true;
+        }
+
+        return normalized.contains("../") || normalized.contains("/..");
     }
 
     public static String adaptSeparatorToUnix(String path) {
