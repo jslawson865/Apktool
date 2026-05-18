@@ -19,14 +19,14 @@ package brut.yaml;
 import java.util.Objects;
 
 public class YamlLine {
-    public int indent = 0;
+    private int indent = 0;
     private String key = "";
     private String value = "";
-    public boolean isComment;
-    public boolean isEmpty;
-    public boolean hasColon;
-    public boolean isNull;
-    public boolean isItem;
+    private boolean isComment;
+    private boolean isEmpty;
+    private boolean hasColon;
+    private boolean isNull;
+    private boolean isItem;
 
     public YamlLine(String line) {
         // special end line marker
@@ -104,5 +104,29 @@ public class YamlLine {
 
     public boolean getValueBool() {
         return Objects.equals(value, "true");
+    }
+
+    public int getIndent() {
+        return indent;
+    }
+
+    public boolean isComment() {
+        return isComment;
+    }
+
+    public boolean isEmpty() {
+        return isEmpty;
+    }
+
+    public boolean hasColon() {
+        return hasColon;
+    }
+
+    public boolean isNull() {
+        return isNull;
+    }
+
+    public boolean isItem() {
+        return isItem;
     }
 }

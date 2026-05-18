@@ -52,16 +52,16 @@ public class YamlReader {
     }
 
     public int getIndent() {
-        return getLine().indent;
+        return getLine().getIndent();
     }
 
     public boolean isEnd() {
-        return getLine().isNull;
+        return getLine().isNull();
     }
 
     public boolean isCommentOrEmpty() {
         YamlLine line = getLine();
-        return line.isEmpty || line.isComment;
+        return line.isEmpty() || line.isComment();
     }
 
     public void skipInsignificant() {
@@ -112,7 +112,7 @@ public class YamlReader {
             }
             YamlLine line = getLine();
             // skip don't checked line or lines with other indent
-            if (objIndent != line.indent || !line.hasColon) {
+            if (objIndent != line.getIndent() || !line.hasColon()) {
                 nextLine();
                 continue;
             }
@@ -134,7 +134,7 @@ public class YamlReader {
         // detect indent for the object data
         nextLine();
         YamlLine line = getLine();
-        int objIndent = line.indent;
+        int objIndent = line.getIndent();
         // object data must have indent
         // otherwise stop reading
         if (objIndent <= prevIndent || !check.check(line)) {
@@ -147,7 +147,7 @@ public class YamlReader {
                 return;
             }
             line = getLine();
-            if (objIndent != line.indent || !check.check(line)) {
+            if (objIndent != line.getIndent() || !check.check(line)) {
                 pushLine();
                 return;
             }
@@ -156,7 +156,7 @@ public class YamlReader {
     }
 
     public <T extends YamlSerializable> void readObject(T obj) {
-        readObject(obj, line -> line.hasColon, YamlSerializable::readItem);
+        readObject(obj, line -> line.hasColon(), YamlSerializable::readItem);
     }
 
     /**
@@ -181,7 +181,7 @@ public class YamlReader {
                 return;
             }
             YamlLine line = getLine();
-            if (dataIndent != line.indent || !line.isItem) {
+            if (dataIndent != line.getIndent() || !line.isItem()) {
                 pushLine();
                 return;
             }
@@ -199,21 +199,21 @@ public class YamlReader {
     }
 
     public void readStringMap(Map<String, String> map) {
-        readObject(map, line -> line.hasColon, (items, reader) -> {
+        readObject(map, line -> line.hasColon(), (items, reader) -> {
             YamlLine line = reader.getLine();
             items.put(line.getKey(), line.getValue());
         });
     }
 
     public void readIntMap(Map<String, Integer> map) {
-        readObject(map, line -> line.hasColon, (items, reader) -> {
+        readObject(map, line -> line.hasColon(), (items, reader) -> {
             YamlLine line = reader.getLine();
             items.put(line.getKey(), line.getValueInt());
         });
     }
 
     public void readBoolMap(Map<String, Boolean> map) {
-        readObject(map, line -> line.hasColon, (items, reader) -> {
+        readObject(map, line -> line.hasColon(), (items, reader) -> {
             YamlLine line = reader.getLine();
             items.put(line.getKey(), line.getValueBool());
         });
