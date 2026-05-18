@@ -69,7 +69,7 @@ public class SmaliBuilder {
                 try {
                     success = buildFile(smaliFile, dexBuilder);
                     cause = null;
-                } catch (Exception ex) {
+                } catch (IOException | RecognitionException ex) {
                     success = false;
                     cause = ex;
                 }
