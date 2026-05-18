@@ -292,12 +292,13 @@ public class ApkDecoder {
             Map<String, String> resFileMap = mResDecoder.getResFileMap();
             Set<String> uncompressedExts = new HashSet<>();
             Set<String> uncompressedFiles = new HashSet<>();
+            java.util.regex.Matcher noCompressExtMatcher = NO_COMPRESS_EXT_PATTERN.matcher("");
 
             for (String fileName : in.getFiles(true)) {
                 if (in.getCompressionLevel(fileName) == 0) {
                     String ext;
                     if (in.getSize(fileName) > 0 && !(ext = FilenameUtils.getExtension(fileName)).isEmpty()
-                            && NO_COMPRESS_EXT_PATTERN.matcher(ext).matches()) {
+                            && noCompressExtMatcher.reset(ext).matches()) {
                         uncompressedExts.add(ext);
                     } else {
                         uncompressedFiles.add(resFileMap.getOrDefault(fileName, fileName));
