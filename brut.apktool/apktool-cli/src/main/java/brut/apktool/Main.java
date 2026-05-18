@@ -833,7 +833,7 @@ public class Main {
                     } else {
                         System.out.println(message);
                     }
-                } catch (Exception ex) {
+                } catch (RuntimeException ex) {
                     reportError(null, ex, ErrorManager.FORMAT_FAILURE);
                 }
             }
