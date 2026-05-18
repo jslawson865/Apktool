@@ -175,17 +175,19 @@ public class ResStringPool {
 
     @VisibleForTesting
     String decodeString(int offset, int length) {
+        if (length < 0 || offset < 0 || length > mStrings.length - offset) {
+            if (!mIsUtf8) {
+                Log.w(TAG, "String extends outside of pool at %s of length %s", offset, length);
+            }
+            return null;
+        }
+
         try {
             ByteBuffer buffer = ByteBuffer.wrap(mStrings, offset, length);
             return (mIsUtf8 ? UTF8_DECODER : UTF16LE_DECODER).decode(buffer).toString();
         } catch (CharacterCodingException ignored) {
             if (!mIsUtf8) {
                 Log.w(TAG, "Failed to decode a string at offset %s of length %s", offset, length);
-                return null;
-            }
-        } catch (IndexOutOfBoundsException ignored) {
-            if (!mIsUtf8) {
-                Log.w(TAG, "String extends outside of pool at %s of length %s", offset, length);
                 return null;
             }
         }
