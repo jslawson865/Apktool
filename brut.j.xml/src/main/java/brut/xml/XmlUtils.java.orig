@@ -62,10 +62,6 @@ public final class XmlUtils {
         "http://apache.org/xml/features/disallow-doctype-decl";
     private static final String FEATURE_LOAD_EXTERNAL_DTD =
         "http://apache.org/xml/features/nonvalidating/load-external-dtd";
-    private static final String FEATURE_EXTERNAL_GENERAL_ENTITIES =
-        "http://xml.org/sax/features/external-general-entities";
-    private static final String FEATURE_EXTERNAL_PARAMETER_ENTITIES =
-        "http://xml.org/sax/features/external-parameter-entities";
 
     private XmlUtils() {
         // Private constructor for utility class.
@@ -78,8 +74,6 @@ public final class XmlUtils {
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         factory.setFeature(FEATURE_DISALLOW_DOCTYPE_DECL, true);
         factory.setFeature(FEATURE_LOAD_EXTERNAL_DTD, false);
-        factory.setFeature(FEATURE_EXTERNAL_GENERAL_ENTITIES, false);
-        factory.setFeature(FEATURE_EXTERNAL_PARAMETER_ENTITIES, false);
 
         try {
             factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
