@@ -47,7 +47,7 @@ jobs:
         run: ldd ${{ env.BINARY_PATH }}/linux/${{ matrix.file }} || true
 
   analyze-windows-aapt:
-    runs-on: windows-latest
+    runs-on: windows-2025
     strategy:
       matrix:
         file: [ aapt2.exe ]
@@ -68,7 +68,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ ubuntu-latest, macOS-latest, windows-latest ]
+        os: [ ubuntu-latest, macOS-latest, windows-2025 ]
         java: [ 8, 11, 17, 21 ]
     steps:
       - uses: actions/checkout@v6
