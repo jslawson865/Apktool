@@ -43,7 +43,6 @@ public class SmaliBuilder {
     private static final String TAG = SmaliBuilder.class.getName();
 
     private static final boolean VERBOSE_ERRORS = false;
-    private static final boolean PRINT_TOKENS = false;
 
     private final int mApiLevel;
 
@@ -104,14 +103,6 @@ public class SmaliBuilder {
             lexer.setSourceFile(smaliFile);
 
             CommonTokenStream tokens = new CommonTokenStream(lexer);
-
-            if (PRINT_TOKENS) {
-                for (Token token : tokens.getTokens()) {
-                    if (token.getChannel() != smaliParser.HIDDEN) {
-                        System.out.println(smaliParser.tokenNames[token.getType()] + ": " + token.getText());
-                    }
-                }
-            }
 
             smaliParser parser = new smaliParser(tokens);
             parser.setApiLevel(mApiLevel);
