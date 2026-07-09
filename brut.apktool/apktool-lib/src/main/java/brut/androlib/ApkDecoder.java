@@ -247,8 +247,9 @@ public class ApkDecoder {
         try {
             Directory in = mApkFile.getDirectory();
 
+            java.util.regex.Matcher matcher = ApkInfo.ORIGINAL_FILES_PATTERN.matcher("");
             for (String fileName : in.getFiles(true)) {
-                if (ApkInfo.ORIGINAL_FILES_PATTERN.matcher(fileName).matches()) {
+                if (matcher.reset(fileName).matches()) {
                     in.copyToDir(originalDir, fileName);
                 }
             }
@@ -266,8 +267,9 @@ public class ApkDecoder {
             Set<String> dexFiles = mSmaliDecoder.getDexFiles();
             Map<String, String> resFileMap = mResDecoder.getResFileMap();
 
+            java.util.regex.Matcher matcher = ApkInfo.STANDARD_FILES_PATTERN.matcher("");
             for (String fileName : in.getFiles(true)) {
-                if (!ApkInfo.STANDARD_FILES_PATTERN.matcher(fileName).matches() && !dexFiles.contains(fileName)
+                if (!matcher.reset(fileName).matches() && !dexFiles.contains(fileName)
                         && !resFileMap.containsKey(fileName)) {
                     in.copyToDir(unknownDir, fileName);
                 }
