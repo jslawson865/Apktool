@@ -33,6 +33,7 @@ import org.apache.commons.io.FilenameUtils;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ApkDecoder {
@@ -119,9 +120,10 @@ public class ApkDecoder {
             Directory in = mApkFile.getDirectory();
             boolean allSrc = mConfig.isDecodeSourcesFull();
             boolean noSrc = mConfig.isDecodeSourcesNone();
+            Matcher classesMatcher = ApkInfo.CLASSES_FILES_PATTERN.matcher("");
 
             for (String fileName : in.getFiles(allSrc)) {
-                if (allSrc ? !fileName.endsWith(".dex") : !ApkInfo.CLASSES_FILES_PATTERN.matcher(fileName).matches()) {
+                if (allSrc ? !fileName.endsWith(".dex") : !classesMatcher.reset(fileName).matches()) {
                     continue;
                 }
 
@@ -220,6 +222,7 @@ public class ApkDecoder {
             Set<String> dexFiles = mSmaliDecoder.getDexFiles();
             Map<String, String> resFileMap = mResDecoder.getResFileMap();
             boolean noAssets = mConfig.isDecodeAssetsNone();
+            Matcher originalFilesMatcher = ApkInfo.ORIGINAL_FILES_PATTERN.matcher("");
 
             for (String dirName : ApkInfo.RAW_DIRS) {
                 if (!in.containsDir(dirName) || (noAssets && dirName.equals("assets"))) {
@@ -229,7 +232,7 @@ public class ApkDecoder {
                 Log.i(TAG, "Copying " + dirName + "...");
                 for (String fileName : in.getDir(dirName).getFiles(true)) {
                     fileName = dirName + in.separator + fileName;
-                    if (!ApkInfo.ORIGINAL_FILES_PATTERN.matcher(fileName).matches()
+                    if (!originalFilesMatcher.reset(fileName).matches()
                             && !dexFiles.contains(fileName) && !resFileMap.containsKey(fileName)) {
                         in.copyToDir(outDir, fileName);
                     }
@@ -246,9 +249,10 @@ public class ApkDecoder {
         Log.i(TAG, "Copying original files...");
         try {
             Directory in = mApkFile.getDirectory();
+            Matcher originalMatcher = ApkInfo.ORIGINAL_FILES_PATTERN.matcher("");
 
             for (String fileName : in.getFiles(true)) {
-                if (ApkInfo.ORIGINAL_FILES_PATTERN.matcher(fileName).matches()) {
+                if (originalMatcher.reset(fileName).matches()) {
                     in.copyToDir(originalDir, fileName);
                 }
             }
@@ -265,9 +269,10 @@ public class ApkDecoder {
             Directory in = mApkFile.getDirectory();
             Set<String> dexFiles = mSmaliDecoder.getDexFiles();
             Map<String, String> resFileMap = mResDecoder.getResFileMap();
+            Matcher standardMatcher = ApkInfo.STANDARD_FILES_PATTERN.matcher("");
 
             for (String fileName : in.getFiles(true)) {
-                if (!ApkInfo.STANDARD_FILES_PATTERN.matcher(fileName).matches() && !dexFiles.contains(fileName)
+                if (!standardMatcher.reset(fileName).matches() && !dexFiles.contains(fileName)
                         && !resFileMap.containsKey(fileName)) {
                     in.copyToDir(unknownDir, fileName);
                 }
@@ -292,12 +297,13 @@ public class ApkDecoder {
             Map<String, String> resFileMap = mResDecoder.getResFileMap();
             Set<String> uncompressedExts = new HashSet<>();
             Set<String> uncompressedFiles = new HashSet<>();
+            Matcher noCompressMatcher = NO_COMPRESS_EXT_PATTERN.matcher("");
 
             for (String fileName : in.getFiles(true)) {
                 if (in.getCompressionLevel(fileName) == 0) {
                     String ext;
                     if (in.getSize(fileName) > 0 && !(ext = FilenameUtils.getExtension(fileName)).isEmpty()
-                            && NO_COMPRESS_EXT_PATTERN.matcher(ext).matches()) {
+                            && noCompressMatcher.reset(ext).matches()) {
                         uncompressedExts.add(ext);
                     } else {
                         uncompressedFiles.add(resFileMap.getOrDefault(fileName, fileName));
