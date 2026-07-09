@@ -80,46 +80,34 @@ public class ResPrimitive extends ResItem {
                 int unitType = mData & COMPLEX_UNIT_MASK;
                 switch (unitType) {
                     case COMPLEX_UNIT_PX:
-                        value += "px";
-                        break;
+                        return value.concat("px");
                     case COMPLEX_UNIT_DIP:
-                        value += "dp";
-                        break;
+                        return value.concat("dp");
                     case COMPLEX_UNIT_SP:
-                        value += "sp";
-                        break;
+                        return value.concat("sp");
                     case COMPLEX_UNIT_PT:
-                        value += "pt";
-                        break;
+                        return value.concat("pt");
                     case COMPLEX_UNIT_IN:
-                        value += "in";
-                        break;
+                        return value.concat("in");
                     case COMPLEX_UNIT_MM:
-                        value += "mm";
-                        break;
+                        return value.concat("mm");
                     default:
                         Log.w(TAG, "Unexpected value unit: " + unitType);
-                        value += "??";
-                        break;
+                        return value.concat("??");
                 }
-                return value;
             }
             case TYPE_FRACTION: {
                 String value = floatToString(complexToFloat(mData) * 100);
                 int unitType = mData & COMPLEX_UNIT_MASK;
                 switch (unitType) {
                     case COMPLEX_UNIT_FRACTION:
-                        value += "%";
-                        break;
+                        return value.concat("%");
                     case COMPLEX_UNIT_FRACTION_PARENT:
-                        value += "%p";
-                        break;
+                        return value.concat("%p");
                     default:
                         Log.w(TAG, "Unexpected value unit: " + unitType);
-                        value += "??";
-                        break;
+                        return value.concat("??");
                 }
-                return value;
             }
             case TYPE_INT_BOOLEAN:
                 return mData != 0 ? "true" : "false";
