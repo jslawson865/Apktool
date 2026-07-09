@@ -33,6 +33,7 @@ import org.apache.commons.io.FilenameUtils;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ApkDecoder {
@@ -120,8 +121,9 @@ public class ApkDecoder {
             boolean allSrc = mConfig.isDecodeSourcesFull();
             boolean noSrc = mConfig.isDecodeSourcesNone();
 
+            Matcher matcher = ApkInfo.CLASSES_FILES_PATTERN.matcher("");
             for (String fileName : in.getFiles(allSrc)) {
-                if (allSrc ? !fileName.endsWith(".dex") : !ApkInfo.CLASSES_FILES_PATTERN.matcher(fileName).matches()) {
+                if (allSrc ? !fileName.endsWith(".dex") : !matcher.reset(fileName).matches()) {
                     continue;
                 }
 
@@ -227,9 +229,10 @@ public class ApkDecoder {
                 }
 
                 Log.i(TAG, "Copying " + dirName + "...");
+                Matcher matcher = ApkInfo.ORIGINAL_FILES_PATTERN.matcher("");
                 for (String fileName : in.getDir(dirName).getFiles(true)) {
                     fileName = dirName + in.separator + fileName;
-                    if (!ApkInfo.ORIGINAL_FILES_PATTERN.matcher(fileName).matches()
+                    if (!matcher.reset(fileName).matches()
                             && !dexFiles.contains(fileName) && !resFileMap.containsKey(fileName)) {
                         in.copyToDir(outDir, fileName);
                     }
@@ -246,9 +249,10 @@ public class ApkDecoder {
         Log.i(TAG, "Copying original files...");
         try {
             Directory in = mApkFile.getDirectory();
+            Matcher matcher = ApkInfo.ORIGINAL_FILES_PATTERN.matcher("");
 
             for (String fileName : in.getFiles(true)) {
-                if (ApkInfo.ORIGINAL_FILES_PATTERN.matcher(fileName).matches()) {
+                if (matcher.reset(fileName).matches()) {
                     in.copyToDir(originalDir, fileName);
                 }
             }
@@ -265,9 +269,10 @@ public class ApkDecoder {
             Directory in = mApkFile.getDirectory();
             Set<String> dexFiles = mSmaliDecoder.getDexFiles();
             Map<String, String> resFileMap = mResDecoder.getResFileMap();
+            Matcher matcher = ApkInfo.STANDARD_FILES_PATTERN.matcher("");
 
             for (String fileName : in.getFiles(true)) {
-                if (!ApkInfo.STANDARD_FILES_PATTERN.matcher(fileName).matches() && !dexFiles.contains(fileName)
+                if (!matcher.reset(fileName).matches() && !dexFiles.contains(fileName)
                         && !resFileMap.containsKey(fileName)) {
                     in.copyToDir(unknownDir, fileName);
                 }
@@ -293,11 +298,12 @@ public class ApkDecoder {
             Set<String> uncompressedExts = new HashSet<>();
             Set<String> uncompressedFiles = new HashSet<>();
 
+            Matcher matcher = NO_COMPRESS_EXT_PATTERN.matcher("");
             for (String fileName : in.getFiles(true)) {
                 if (in.getCompressionLevel(fileName) == 0) {
                     String ext;
                     if (in.getSize(fileName) > 0 && !(ext = FilenameUtils.getExtension(fileName)).isEmpty()
-                            && NO_COMPRESS_EXT_PATTERN.matcher(ext).matches()) {
+                            && matcher.reset(ext).matches()) {
                         uncompressedExts.add(ext);
                     } else {
                         uncompressedFiles.add(resFileMap.getOrDefault(fileName, fileName));
